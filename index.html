@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Notes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="icon" href="notes.png">
+<link href="https://fonts.googleapis.com/css2?family=Cal+Sans&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: "Mulish";
+      padding:0px;
+      margin:0px;
+      background: #f8f8f8;
+    }
+
+    #addNoteBtn {
+      padding: 8px 12px;
+      background: #007bff;
+      font-family:"Mulish";
+      color: white;
+      font-size:15px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+
+    #addNoteBtn:hover {
+       box-shadow:2px 2px #f2f2f2;
+    }
+
+     .formatting_button {
+      padding: 8px 12px;
+      display:inline-block;
+      background: transparent;
+      border:solid #ccc 1px;
+      font-family:"Mulish";
+      font-size:15px;
+      color: black;
+      border-radius: 6px;
+      cursor: pointer;
+      transition:0.3s;
+    }
+
+    .formatting_button:hover {
+
+    background:#f2f2f2;
+    box-shadow:2px 2px #f2f2f2;
+
+    }
+
+
+    .note {
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 12px 0;
+      position: relative;
+    }
+
+    .note-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 6px;
+      cursor: text;
+    }
+
+    .note-title[contenteditable="true"]:focus {
+      outline: none;
+    }
+
+    .note-time {
+      color: #777;
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+
+    .note-content {
+      cursor: text;
+    }
+
+    .note-content[contenteditable="true"]:focus {
+      outline: none;
+    }
+
+    .menu {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+    }
+
+    .menu-button {
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-size: 20px;
+    }
+
+    .dropdown {
+      display: none;
+      position: absolute;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      right: 0;
+      top: 30px;
+      z-index: 1;
+    }
+
+    .dropdown button {
+      background: none;
+      border: none;
+      padding: 8px 12px;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .dropdown button:hover {
+      background-color: #f2f2f2;
+    }
+
+    /* Insert Button + Menu Styles */
+    #plusBtn {
+      position: absolute;
+      display: none;
+      cursor: pointer;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 50%;
+      width: 24px;
+      padding-bottom:2px;
+      padding-left:1px;
+      padding-right:1px;
+      height: 24px;
+      text-align: center;
+      line-height: 24px;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      z-index: 1000;
+    }
+
+    #menu {
+      position: absolute;
+      display: none;
+      background: white;
+      border: 1px solid #ccc;
+      width: 200px;
+      z-index: 1001;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    #menu input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 5px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .menu-item {
+      padding: 5px;
+      cursor: pointer;
+    }
+
+    .menu-item:hover {
+      background-color: #eee;
+    }
+
+    .top_nav {
+      height:50px;
+      width:100%;
+      display: flex;
+      padding:10px;
+      padding-left:20px;
+      background:orangered;
+    }
+
+    .logo {
+      height:98%;
+      cursor:pointer
+    }
+
+    .title {
+      font-size:24px;
+      display:inline-block;
+      cursor:pointer;
+      margin-top:10px;
+      margin-left:10px;
+      color:white;
+    }
+
+    .body {
+      padding:20px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="top_nav">
+    <img class="logo" src="notes.png" onclick="quit()">
+    <span class="title">Notes</span>
+  </div>
+
+  <div class="body">
+   <div style="display: flex; justify-content: space-between; align-items: center;">
+    <button id="addNoteBtn">+ Add Note</button>
+    <div class="formatting-container" style="padding-right:10px;">
+      <button class="formatting_button" onclick="document.execCommand('bold')"><b>B</b></button>
+      <button class="formatting_button" onclick="document.execCommand('italic')" style="font-family:monospace;"><i>I</i></button>
+      <button class="formatting_button" onclick="document.execCommand('underline')" style="text-decoration:underline;"><b>U</b></button>
+    </div>
+  </div>
+
+  <div id="notesContainer"></div>
+
+ 
+  <div id="plusBtn">+</div>
+  <div id="menu">
+    <input type="text" id="search" placeholder="Search...">
+    <div class="menu-item" data-insert="bullet">• Bullet Point</div>
+    <div class="menu-item" data-insert="checkbox">☐ Task</div>
+  </div>
+
+  </div>
+
+  <img src="back.png" style="position: fixed; bottom: 20px; left: 20px; width: 30px; height: 30px; cursor: pointer;" onclick="quit()">
+
+
+  <script>
+
+      function quit() {
+    window.close()
+    setTimeout(() => {
+       window.location.href = "https://jamesy-tech.github.io/jamesy-creator/";
+    }, 100);
+  }
+
+
+    const notesContainer = document.getElementById("notesContainer");
+    const addNoteBtn = document.getElementById("addNoteBtn");
+    const plusBtn = document.getElementById("plusBtn");
+    const menu = document.getElementById("menu");
+    const search = document.getElementById("search");
+    let caretRange;
+
+    let notes = JSON.parse(localStorage.getItem("notes")) || [];
+
+    function saveNotes() {
+      localStorage.setItem("notes", JSON.stringify(notes));
+    }
+
+    function renderNotes() {
+      notesContainer.innerHTML = "";
+      notes.forEach((note, index) => {
+        const noteEl = document.createElement("div");
+        noteEl.className = "note";
+
+        const title = document.createElement("div");
+        title.className = "note-title";
+        title.contentEditable = "true";
+        title.innerHTML = note.title;
+        title.addEventListener("input", () => {
+          notes[index].title = title.innerHTML;
+          saveNotes();
+        });
+
+        const time = document.createElement("div");
+        time.className = "note-time";
+        time.innerHTML = note.time;
+
+        const content = document.createElement("div");
+        content.className = "note-content";
+        content.contentEditable = "true";
+        content.innerHTML = note.content;
+
+
+content.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+  checkbox.addEventListener('change', () => {
+
+    if (checkbox.checked) {
+      checkbox.setAttribute('checked', 'true');
+    } else {
+      checkbox.removeAttribute('checked');
+    }
+
+    notes[index].content = content.innerHTML;
+    saveNotes();
+  });
+});
+
+
+        content.addEventListener("input", () => {
+          notes[index].content = content.innerHTML;
+          saveNotes();
+        });
+
+        content.addEventListener("keyup", () => {
+          const selection = window.getSelection();
+          if (!selection.rangeCount) return;
+          const range = selection.getRangeAt(0).cloneRange();
+          caretRange = range;
+
+          const rect = range.getClientRects()[0];
+          if (!rect) return;
+
+          plusBtn.style.top = `${rect.top + window.scrollY + 20}px`;
+          plusBtn.style.left = `${rect.left + window.scrollX}px`;
+          plusBtn.style.display = "block";
+        });
+
+        const menu = document.createElement("div");
+        menu.className = "menu";
+
+        const menuBtn = document.createElement("button");
+        menuBtn.className = "menu-button";
+        menuBtn.innerHTML = "⋯";
+        menuBtn.onclick = () => {
+          dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+        };
+
+        const dropdown = document.createElement("div");
+        dropdown.className = "dropdown";
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.innerHTML = "Delete";
+        deleteBtn.onclick = () => {
+          notes.splice(index, 1);
+          saveNotes();
+          renderNotes();
+        };
+
+        dropdown.appendChild(deleteBtn);
+        menu.appendChild(menuBtn);
+        menu.appendChild(dropdown);
+
+        noteEl.appendChild(menu);
+        noteEl.appendChild(title);
+        noteEl.appendChild(time);
+        noteEl.appendChild(content);
+
+        notesContainer.appendChild(noteEl);
+      });
+    }
+
+    addNoteBtn.onclick = () => {
+      const newNote = {
+        title: "Untitled Note",
+        time: new Date().toLocaleString(),
+        content: "Note content"
+      };
+      notes.unshift(newNote);
+      saveNotes();
+      renderNotes();
+    };
+
+    renderNotes();
+
+    // Insert logic
+    plusBtn.addEventListener("click", () => {
+      if (!caretRange) return;
+      menu.style.top = `${plusBtn.offsetTop + 30}px`;
+      menu.style.left = `${plusBtn.offsetLeft}px`;
+      menu.style.display = "block";
+      search.value = "";
+      search.focus();
+    });
+
+    search.addEventListener("input", () => {
+      const term = search.value.toLowerCase();
+      document.querySelectorAll(".menu-item").forEach(item => {
+        item.style.display = item.textContent.toLowerCase().includes(term) ? "block" : "none";
+      });
+    });
+
+    document.querySelectorAll(".menu-item").forEach(item => {
+      item.addEventListener("click", () => {
+        if (!caretRange) return;
+        const type = item.getAttribute("data-insert");
+        caretRange.deleteContents();
+
+        if (type === "bullet") {
+          caretRange.insertNode(document.createTextNode("• "));
+        } else if (type === "checkbox") {
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          caretRange.insertNode(checkbox);
+          caretRange.insertNode(document.createTextNode(" "));
+        }
+
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(caretRange);
+
+        menu.style.display = "none";
+      });
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!menu.contains(e.target) && e.target !== plusBtn) {
+        menu.style.display = "none";
+      }
+    });
+  </script>
+</body>
+</html>
