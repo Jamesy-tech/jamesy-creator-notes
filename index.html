@@ -229,10 +229,15 @@
 
   </div>
 
-  <img src="back.png" style="position: fixed; bottom: 20px; left: 20px; width: 30px; height: 30px; cursor: pointer;" onclick="quit()">
+  <img src="back.png" class="window" style="position: fixed; bottom: 20px; left: 20px; width: 30px; height: 30px; cursor: pointer;" onclick="quit()">
 
 
   <script>
+
+      if (new URLSearchParams(location.search).get("type") === "window") {
+  document.querySelectorAll(".window").forEach(el => el.style.display = "none");
+}
+
 
       function quit() {
     window.close()
