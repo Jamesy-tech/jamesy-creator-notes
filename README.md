@@ -1,2 +1,1 @@
-# Jamesy Creator Notes
-The all new notes app for Jamesy Creator.
+### This repository is part of the Jamesy Creator project.
